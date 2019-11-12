@@ -11,7 +11,7 @@ int main() {
 	ofstream fout;
 	fin.open("input.txt");
 	fout.open("output.txt");
-	int cost = 0;// our the shortest path
+	int cost = 0;// our shortest path
 	int count = 0;// amount of edges in spanning subgraph
 	
 	int n;
