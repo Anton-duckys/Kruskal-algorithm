@@ -11,13 +11,15 @@ int main() {
 	ofstream fout;
 	fin.open("input.txt");
 	fout.open("output.txt");
-	int cost = 0;// наш кратчайший путь
-	int count = 0;// количество ребер в полученном остовном подграфе
+	int cost = 0;// our the shortest path
+	int count = 0;// amount of edges in spanning subgraph
 	
 	int n;
-	fin >> n;// количество вершин
-	vector < pair < int, pair<int, int> > > g; // вес - вершина 1 - вершина 2 
-	vector<vector<string>> matr;// матрица смежности (из строк для того, чтобы можно было написать inf если вершины не соединены, потом буду инвертировать строку в число)
+	fin >> n;// amount of verexes
+	//vector for defining edges
+	vector < pair < int, pair<int, int> > > g; // cost - vertex 1 - vertex 2 
+	vector<vector<string>> matr;// adjacency matrix of weighted graph
+	//fill adjacency matrix from file
 	matr.resize(n);
 	for (auto &el : matr) {
 		el.reserve(n);		
@@ -27,17 +29,17 @@ int main() {
 			string s;
 			fin >> s;
 			
-			el.push_back(s);// заполняем матрицу смежности 
+			el.push_back(s); 
 			
 		}
 	
 
 	}
-	
+	// put values of adjacency matrix into vector of pairs g
 	for (int i = 0; i < n-1; ++i) {
-		for (int j = i+1; j < n; ++j) {// пробегаю по матрицы смежности 
-			{if(matr[i][j]!="inf")// пропускаю все ячейки, где записан inf
-				g.push_back(make_pair(atoi((matr[i][j]).c_str()), make_pair(i, j)));// кладу значение матрицы в вектор g
+		for (int j = i+1; j < n; ++j) { 
+			{if(matr[i][j]!="inf")
+				g.push_back(make_pair(atoi((matr[i][j]).c_str()), make_pair(i, j)));
 				
 			}
 		}
@@ -45,37 +47,38 @@ int main() {
 
 
 	
-	
-	vector < pair<int, int> > res;//  колиечество пар смежных вершин для остовного подграфа(дерева)
+	// vector for edges in spanning subgraph
+	vector < pair<int, int> > res;
 
 	sort(g.begin(), g.end());
-	vector<int> tree_id(n);// вектор в котором будем проверять объединены ли вершины или нет
-	for (int i = 0; i < n; ++i)//n- количество вершин
-		tree_id[i] = i;// помещаем каждую вершину в свое дерево
-	for (int i = 0; i<g.size(); ++i)// пока есть ребра в данном графе  
+	vector<int> tree_id(n);
+	for (int i = 0; i < n; ++i)
+		tree_id[i] = i;
+	for (int i = 0; i<g.size(); ++i)
 	{
-		int a = g[i].second.first, //определяем первую вершину
-			b = g[i].second.second, // определяем втору вершину
-			lenght = g[i].first;// определяем вес
-		if (tree_id[a] != tree_id[b])// проверяем не объеденены ли вершины
+		int a = g[i].second.first, 
+			b = g[i].second.second, 
+			lenght = g[i].first;
+		if (tree_id[a] != tree_id[b])
 		{
-			cost += lenght;// суммируем веса для короткого пути
-			res.push_back(make_pair(a, b));// закидываем пару вершин нашего дерева в  вектор
+			cost += lenght;
+			res.push_back(make_pair(a, b));
 			int old_id = tree_id[b],
 				new_id = tree_id[a];
 			for (int j = 0; j < n; ++j)
-				if (tree_id[j] == old_id)//проверяем на образование циклов
-					tree_id[j] = new_id;//объединяем вершины
+				if (tree_id[j] == old_id)
+					tree_id[j] = new_id;
 			
 		}
 	}
 	sort(res.begin(), res.end());
 	fout << "ADJACENT PEAKS" << endl;
+	// print our edges in spanning subgraph
 	for (auto el : res) {
-		fout <<"("<< el.first << " , " << el.second<<")" << endl;// вывод смежных вершин каркаса
+		fout <<"("<< el.first << " , " << el.second<<")" << endl;
 	}
 	
-	fout <<"The shortest path: "<< cost << endl;// вывод кратчайшего пути
+	fout <<"The shortest path: "<< cost << endl;
 	
 	
 	
